@@ -49,11 +49,13 @@ Examples:
 Options:
 
   [ Path flags ]
-  -gp|--gopath /specific/path/    Instruct go.sh to use the specified GOPATH
+
+  -u|--user                       Instruct go.sh to set the path to /usr/local/go; /usr/local/go/bin
   -sp|--shared-gopath             Instruct go.sh to use $HOME/go as a GOPATH
   -pp|--project-gopath            Instruct go.sh to create a GOPATH for the specified
                                   project under $HOME/.go/TARGET [requires --target]
-  -gr|--goroot /path/to/go        Instruct go.sh to use the go install specified.
+  -gp|--gopath /specific/path/    Instruct go.sh to use the specified GOPATH
+  -gr|--goroot /path/to/go        Instruct go.sh to use the specified GOROOT.
                                   Go officially defaults to /usr/local/go/bin
 
   [ Build flags ]
@@ -152,7 +154,7 @@ function set_go_path(){
     #Check that the candidate Go bin PATH isn't already in the PATH:
     if [[ ":$PATH:" == *":$GOPATH/bin:"* ]]; then
         if $_DEBUG; then
-            echo "GOPATH: $GOPATH/bin already exists in path (not adding)."
+            echo "GOPATH/bin: $GOPATH/bin already exists in path (not adding)."
         fi
     else
         PATH=$GOPATH/bin:$PATH
@@ -271,7 +273,6 @@ function build(){
 
 #-------------------------------------------------------------------------------------#
 
-
 # If user specified args, consider them.
 while [[ $# > 0 ]]
 do
@@ -314,6 +315,10 @@ do
         -gr|--goroot)
             _GOROOT="$1"
         shift
+        ;;
+        -u|--user)
+            _GOPATH="/usr/local/go"
+            set_go_path
         ;;
         -h|--help)
             usage
